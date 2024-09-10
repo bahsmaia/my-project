@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quem Somos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Comforta, sans-serif;
+            background: black;
+        }
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            height: 200px;
+            background-color: white;
+            color: black;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+        #popup h1 {
+            font-size: 20px;
+            margin: 0;
+        }
+        #popup p {
+            font-size: 16px;
+            margin: 15px 0;
+        }
+        #popup button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 15px 0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #btn-destruir{
+            background-color: #8600ff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            width: 250px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 10;
+        }
+
+        #btn-destruir:hover {
+            background-color: #5f00b5;
+        }
+
+        #btn-portifolio {
+            background-color: #00ffdc;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border: none;
+            padding: 15px 30px;
+            width: 250px;
+            text-align: center;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 10;
+        }
+
+        #btn-portifolio:hover {
+            background-color: #1bbfa9;
+            color: rgb(255, 255, 255);
+        }
+
+        #jogo-container {
+            display: none;
+        }
+
+        footer {
+            width: 100%;
+            padding: 20px;
+            background-color: #292929;
+            position: fixed;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            border-bottom: 1px solid #53ffdd;
+        }
+    </style>
+</head>
+<body>
+    <div id="jogo-container">
+        <!-- Aqui vai o conteúdo do jogo -->
+    </div>
+    <div id="popup">
+        <h1 id="popup-title">Parabéns! Você destruiu essa página!</h1>
+        <p id="popup-message">Levou apenas: <span id="time"></span> segundos</p>
+        <button onclick="closePopup()">Fechar</button>
+    </div>
+    
+    <footer>
+        <div id="botoes-rodape">
+            <button id="btn-destruir">DESTRUIR</button>
+            <button id="btn-portifolio">
+                <a href="portifolio.html">PORTIFÓLIO</a>
+            </button>
+        </div>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script>
+        let snake = [];
+        let snakeLength = 5;
+        let snakeSize = 20;
+        let direction = 'RIGHT';
+        let textChars = [];
+        let gameOver = false;
+        const MARGIN = 750;
+        const CHAR_SPACING = 5;
+        const LINE_HEIGHT = 35;
+        const DETECTION_MARGIN = 10; // Margem para aumentar a área de detecção de colisão
+        let startTime;
+        let bestTime = localStorage.getItem('bestTime') || Infinity;
+        let fireworks = [];
+        let showFireworks = false;
+        let colors = ['#53ffdd', '#8600ff'];
+        let gameStarted = false; // Variável para controlar o início do jogo
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            frameRate(20);
+            noCursor();
+            textAlign(CENTER, CENTER);
+            textSize(35);
+            startTime = millis();
+
+            let textToDisplay = "Sou Barbara Maia, designer gráfica e web. Transformando ideias em realidade visual, criando designs únicos que refletem a essência de cada marca. Ofereço soluções criativas e personalizadas, fortalecendo a comunicação visual dos meus clientes. Vamos conversar e descobrir como posso ajudar a elevar sua marca?";
+            
+            let availableWidth = width - 2 * MARGIN;
+            let lines = [];
+            let words = textToDisplay.split(' ');
+            let line = '';
+
+            // Organizar o texto em linhas que cabem na largura disponível
+            while (words.length > 0) {
+                line = '';
+                while (words.length > 0 && textWidth(line + words[0] + ' ') < availableWidth) {
+                    line += words.shift() + ' ';
+                }
+                lines.push(line.trim());
+            }
+
+            let totalTextHeight = lines.length * (textAscent() + textDescent() + LINE_HEIGHT) - LINE_HEIGHT;
+            let startY = (height - totalTextHeight) / 2;
+
+            // Adiciona cada caractere ao array `textChars` com o espaçamento correto
+            for (let i = 0; i < lines.length; i++) {
+                let currentLine = lines[i];
+                let currentX = width / 2 - textWidth(currentLine) / 2; // Centro horizontalmente
+                let currentY = startY + i * (textAscent() + textDescent() + LINE_HEIGHT / 2); // Posiciona verticalmente
+
+                for (let j = 0; j < currentLine.length; j++) {
+                    let char = currentLine[j];
+                    let charWidth = textWidth(char);
+
+                    // Armazena cada caractere com sua posição e dimensões
+                    textChars.push({
+                        text: char,
+                        x: currentX,
+                        y: currentY,
+                        width: charWidth,
+                        height: textAscent() + textDescent()
+                    });
+
+                    // Ajusta a posição horizontal para o próximo caractere
+                    currentX += charWidth + CHAR_SPACING;
+                }
+            }
+
+            // Inicializa a cobra
+            for (let i = 0; i < snakeLength; i++) {
+                snake.push(createVector(i * snakeSize, 0));
+            }
+        }
+
+        function draw() {
+            if (!gameStarted) {
+                background(0);
+                fill(255);
+                noStroke();
+                for (let i = 0; i < textChars.length; i++) {
+                    let t = textChars[i];
+                    text(t.text, t.x, t.y);
+                }
+                return;
+            }
+
+            if (gameOver) {
+                background(0);
+                if (frameCount % 10 < 5) {
+                    fill(255, 0, 0);
+                } else {
+                    fill(0);
+                }
+                noStroke();
+                for (let part of snake) {
+                    rect(part.x, part.y, snakeSize, snakeSize);
+                }
+                fill(255, 0, 0);
+                textSize(32);
+                textAlign(CENTER, CENTER);
+                text('Game Over', width / 2, height / 2);
+                if (showFireworks) {
+                    fireworks.forEach(firework => {
+                        firework.update();
+                        firework.show();
+                    });
+                }
+                setTimeout(reloadPage, 3000);
+                return;
+            }
+            
+
+            background(0);
+            fill(255);
+            noStroke();
+            for (let i = 0; i < textChars.length; i++) {
+                let t = textChars[i];
+                text(t.text, t.x, t.y);
+            }
+
+            let head = snake[snake.length - 1].copy();
+            if (direction === 'RIGHT') head.x += snakeSize;
+            else if (direction === 'LEFT') head.x -= snakeSize;
+            else if (direction === 'UP') head.y -= snakeSize;
+            else if (direction === 'DOWN') head.y += snakeSize;
+
+            if (head.x >= width || head.x < 0 || head.y >= height || head.y < 0) {
+                gameOver = true;
+                return;
+            }
+
+            for (let i = 0; i < snake.length - 1; i++) {
+                if (head.equals(snake[i])) {
+                    gameOver = true;
+                    return;
+                }
+            }
+
+            snake.push(head);
+            snake.shift();
+
+            for (let i = 0; i < textChars.length; i++) {
+                let t = textChars[i];
+                if (head.x + snakeSize > t.x - DETECTION_MARGIN && head.x < t.x + t.width + DETECTION_MARGIN &&
+                    head.y + snakeSize > t.y - DETECTION_MARGIN && head.y < t.y + t.height + DETECTION_MARGIN) {
+                    textChars.splice(i, 1);
+                    snakeLength += 3;
+                    for (let j = 0; j < 3; j++) {
+                        snake.push(createVector(head.x, head.y));
+                    }
+                    break;
+                }
+            }
+
+            fill('#53ffdd');
+            noStroke();
+            for (let part of snake) {
+                rect(part.x, part.y, snakeSize, snakeSize);
+            }
+
+            if (textChars.length === 0) {
+                let elapsedTime = floor((millis() - startTime) / 1000);
+                if (elapsedTime < bestTime) {
+                    bestTime = elapsedTime;
+                    localStorage.setItem('bestTime', bestTime);
+                }
+                gameOver = true;
+                showPopup(elapsedTime);
+            }
+        }
+
+        function keyPressed() {
+            if (keyCode === RIGHT_ARROW && direction !== 'LEFT') {
+                direction = 'RIGHT';
+            } else if (keyCode === LEFT_ARROW && direction !== 'RIGHT') {
+                direction = 'LEFT';
+            } else if (keyCode === UP_ARROW && direction !== 'DOWN') {
+                direction = 'UP';
+            } else if (keyCode === DOWN_ARROW && direction !== 'UP') {
+                direction = 'DOWN';
+            }
+        }
+
+        function reloadPage() {
+            location.reload();
+        }
+
+        function showPopup(elapsedTime) {
+            document.getElementById('time').innerText = elapsedTime;
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        document.getElementById('btn-destruir').addEventListener('click', () => {
+            gameStarted = true;
+            document.getElementById('jogo-container').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

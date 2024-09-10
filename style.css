@@ -1,0 +1,333 @@
+body {
+    margin: 0;
+    font-family: Comfortaa, sans-serif;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+}
+
+/* Ajuste para o header */
+.header {
+    position: relative;
+    z-index: 2; /* Certifica-se que o header fique por cima de outros elementos */
+}
+
+/* Ajuste para o canvas */
+#smokeCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Fica no fundo */
+}
+#header-lottie {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    height: 500px;
+}
+
+.header-content {
+    text-align: center;
+}
+
+/* Sidebar */
+nav.sidebar {
+    width: 100px;
+    height: 100vh;
+    background-color: #000000;
+    border-right: 2px solid #53ffdd;
+    box-shadow: 0 0 15px #53ffdd;
+    padding: 40px 0 0 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    transition: .3s;
+    z-index: 1000;
+}
+
+nav.sidebar.expandir {
+    width: 200px;
+}
+
+/* Ajuste para os lotties e conteúdo principal */
+.lottie-container, .main-section, .content-section {
+    margin-left: 90px;
+    transition: margin-left .3s;
+}
+
+nav.sidebar.expandir ~ .lottie-container,
+nav.sidebar.expandir ~ .main-section,
+nav.sidebar.expandir ~ .content-section {
+    margin-left: 200px;
+}
+
+.btn-expandir {
+    width: 100%;
+    padding-left: 40px;
+    margin-bottom: 40px;
+}
+
+.btn-expandir > i {
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+}
+
+.btn-expandir {
+    margin: 0 auto;
+}
+
+ul {
+    height: 100%;
+    list-style-type: none;
+}
+
+ul li.item-menu {
+    transition: .3s;
+}
+
+/* Regra para quando o item está ativo */
+ul li.ativo {
+    background-color: #53ffdd;
+}
+
+ul li.ativo a,
+ul li.ativo .icon i {
+    color: #000000 !important; /* Preto para o texto e o ícone */
+}
+
+/* Estilo padrão para os links */
+ul li.item-menu a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 15px 1%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Estilo para hover */
+ul li.item-menu:hover {
+    background: #53ffdd;
+}
+
+ul li.item-menu:hover a,
+ul li.item-menu:hover .icon i {
+    color: #000000;
+}
+
+ul li.item-menu a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 15px 1%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+ul li.item-menu a .icon {
+    margin-right: 20px;
+}
+
+ul li.item-menu a .txt-link {
+    margin-left: 10px;
+}
+
+ul li.item-menu a .icon > i {
+    font-size: 30px;
+    line-height: 40px;
+}
+
+/* Header */
+.header {
+    height: 40px;
+    background-color: #2e2e2e;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #53ffdd;
+}
+
+.header-content {
+    text-align: center;
+}
+
+.header-title {
+    font-size: 20px;
+    color: #fff;
+    text-align: justify;
+}
+
+/* Seção principal */
+.main-section {
+    padding: 20px;
+    text-align: center;
+}
+
+.main-section h1 {
+    font-size: 40px;
+    color: #ffef00;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.main-section p {
+    font-size: 25px;
+    color: #fff;
+    text-align: center;
+}
+
+/* Conteúdo principal */
+.content-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.content-section img {
+    width: 100%;
+    height: auto;
+}
+
+/* Lottie container */
+.lottie-container {
+    display: flex;
+    flex-direction: column; /* Alinha lotties em linhas diferentes */
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Espaçamento entre os lotties */
+}
+
+.lottie-item {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+}
+
+/* Responsividade para telas maiores */
+@media (min-width: 768px) {
+    .lottie-container {
+        flex-direction: row; /* Muda para linha nas telas maiores */
+    }
+
+    .lottie-item {
+        flex: 1;
+        max-width: 400px;
+    }
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 767px) {
+    .header-title {
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .main-section h1 {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .main-section p {
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .content-section, .lottie-container {
+        flex-direction: column;
+    }
+
+    .content-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        margin-top: 20px; /* Espaço adicional para evitar sobreposição */
+        text-align: center;
+    }
+    
+    .main-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 50px; /* Espaço para o menu */
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .content-section, .main-section {
+        margin-left: 0;
+    }
+}
+
+/* Blog Container */
+.blog-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+    justify-items: center;
+}
+
+.blog-card {
+    width: 100%;
+    max-width: 300px;
+    border: 2px solid #53ffdd; /* Borda com cor personalizada */
+    border-radius: 10px; /* Bordas arredondadas */
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(83, 255, 221, 0.7); /* Sombra sólida na cor especificada */
+}
+
+.blog-card img {
+    width: 100%;
+    height: auto;
+    border-bottom: 2px solid #53ffdd; /* Linha de separação entre imagem e título */
+}
+
+.blog-card h3 {
+    margin: 0;
+    padding: 15px;
+    font-size: 18px;
+    color: #53ffdd; /* Cor do título */
+}
+
+@media (max-width: 768px) {
+    .blog-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .blog-container {
+        grid-template-columns: 1fr;
+        gap: 10px; /* Reduzindo o espaçamento em telas menores */
+    }
+}
+
+/* Footer */
+.footer {
+    background-color: #2e2e2e;
+    text-align: center;
+    padding: 20px;
+}
+
+.footer-content {
+    font-size: 14px;
+    color: #fff;
+}
